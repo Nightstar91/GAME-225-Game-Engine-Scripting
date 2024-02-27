@@ -2,28 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Flower : MonoBehaviour
 {
-     SpriteRenderer m_FlowerSpriteRenderer;
+    // Variable to hold the sprite render which change the color of the flower
+     SpriteRenderer flowerSpriteRenderer;
     
-    // TextMeshProGUI for debug
-    [SerializeField] TextMeshProUGUI timerText;
-    [SerializeField] TextMeshProUGUI nectarText;
 
     // Attributes involving nectars
-    private float nectarAmount;
+    public float nectarAmount;
     public float nectarRate = 0.5f;
-    public float nectarTimer = 5f;
+    private float nectarTimer = 2f;
+
+    // Variable to store the initial timer set by the user to be reset the timer
     public bool hasNectar;
 
-    private void ShowNectarProduction()
-    {
-        timerText.text = string.Format("Frames: {0}", nectarTimer);
-        nectarText.text = string.Format("Nectar Amount: {0}", nectarAmount);
-    }
 
     // Once the timer hits 0, nectar is created and the timer is reset.
     private void NectarProduction()
@@ -33,7 +29,7 @@ public class Flower : MonoBehaviour
         if(nectarTimer <= 0)
         {
             nectarAmount += nectarRate;
-            nectarTimer = 5f;
+            nectarTimer = 2f;
         }
 
     }
@@ -43,23 +39,24 @@ public class Flower : MonoBehaviour
     {
         if(nectarAmount >= 1)
         {
-            // Once the flower's nectar reaches past 1 it will have nectar and its color is set to normal
-            m_FlowerSpriteRenderer.color = Color.white;
+            // Once the flower's nectar reaches at least 1 it will have nectar and its color is set to normal
+            flowerSpriteRenderer.color = Color.white;
             return true;
         }
 
         else
         {
-            // 
-            m_FlowerSpriteRenderer.color = Color.gray;
+            // Otherwise the hive has no nectar and it's color is set to gray
+            flowerSpriteRenderer.color = Color.gray;
             return false;
         }
     }
     
+    // Call for one frame once the game starts
     void Start()
     {
         //Fetch the SpriteRenderer from the GameObject
-        m_FlowerSpriteRenderer = GetComponent<SpriteRenderer>();
+       flowerSpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
 
@@ -69,8 +66,8 @@ public class Flower : MonoBehaviour
         // The arithmetic for necter being produces after a certain amount of time
         NectarProduction();
 
+        // Checking to see if the flower has nectar
         hasNectar = HasNectarCheck();
 
-        ShowNectarProduction();
     }
 }

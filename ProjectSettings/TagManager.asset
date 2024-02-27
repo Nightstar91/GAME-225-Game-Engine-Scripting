@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Miss
   - Hit
+  - Flower
   layers:
   - Default
   - TransparentFX

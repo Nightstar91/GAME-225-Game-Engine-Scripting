@@ -5,14 +5,16 @@ using UnityEngine;
 
 public class BeeHive : MonoBehaviour
 {
+    // Attributes for honey, nectar and bee
     private float honeyRate = 1f;
     public int nectarAmount = 0;
     public float honeyAmount = 0;
     public int beeWorkerAmount = 2;
     public float honeyTimer = 3f;
-    public BeeHive BeeHiveHome;
+
+    // Attribute for class and gameobject
+    private BeeHive BeeHiveHome;
     public GameObject beePrefab;
-    private Bee beeScript;
     
     //The hive needs to count down to try and produce honey if it has any nectar stored
     private void HoneyProduction()
@@ -46,15 +48,12 @@ public class BeeHive : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Instantiate bee object from the bee prefab (called init method)
-        beeScript = beePrefab.GetComponent<Bee>();
-        // beeScript.Init(BeeHiveHome);
 
-
+        // At the start of the game the beehive will make as many bee as needed per instruction by the user
         while(beeWorkerAmount > 0)
         {
-            beeScript.Init(BeeHiveHome);
-            Instantiate(beePrefab);
+            GameObject beeWorker = Instantiate(beePrefab);
+            beeWorker.GetComponent<Bee>().Init(this);
 
             beeWorkerAmount--;
         }
