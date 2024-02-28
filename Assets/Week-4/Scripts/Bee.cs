@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Bee : MonoBehaviour
 {
     // Attributes 
-    public Flower flowerClass;
+    private float beeTimer = 2f;
     public BeeHive beeHiveHome;
-    public GameObject[] flowerSearch;
+    public Flower[] flowerSearch;
     
 
     // Constructor to initialize the beehive that the bee belongs to in the scene
@@ -16,37 +17,60 @@ public class Bee : MonoBehaviour
         beeHiveHome = BeeHive;
     }
 
-    private void MoveToFlower()
+    // A simple timer to control the bee's movement
+    private void BeeMovementCooldown()
     {
-        // Code to make the bee move to the flower that currently has nectar to harvest
+        beeTimer -= Time.deltaTime;
+
+        if(beeTimer <= 0)
+        {
+            Flower randomFlower = PickFlower();
+            CheckAnyFlower(randomFlower);
+
+            beeTimer = 2f;
+        }
+    }
+
+
+    private Flower PickFlower()
+    {
+        // Picking a random flower that
+        int randomNumber = Random.Range(0, flowerSearch.Length); 
+        Debug.Log($"This is flower number {randomNumber}");
+
+        return flowerSearch[randomNumber];
+    }
+
+    private void CheckAnyFlower(Flower element)
+    {
+        // Code to make it so the bee check for any flower that may have any nectar (For Tutor)
+        Flower target = element;
+        Vector3 originalPosition = transform.position;
+
+        transform.DOMove(target.transform.position, 0.25f).OnComplete( ()=> 
+        {
+            //Take nectar from flower
+            //If flower returned nectar then go back to the hive and give hive nectar
+            //If flower did not return nectar then go check another flower
+
+        });
 
     }
 
-    private void CheckAnyFlower()
+    void Awake()
     {
-        // Code to make it so the bee check for any flower that may have any nectar
-        
+        flowerSearch = GameObject.FindObjectsByType<Flower>(FindObjectsSortMode.None);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // (For Tutor)
-        // Attempted to search for all flower object in the scene with 
-        flowerSearch = GameObject.FindGameObjectsWithTag("Flower");
         
-        // But when I use the debug log, the message appeared 8 times even though I had 4 flower in the scene
-        foreach(GameObject flower in flowerSearch)
-        {
-            Debug.Log("There is flower!");
-        }
-
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        BeeMovementCooldown();
     }
 }
