@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
+// Special thanks to Sally Juettner for helping with some of the logic with CheckAnyFlower function
+
 public class Bee : MonoBehaviour
 {
     // Attributes 
-    private float beeTimer = 2f;
+    public float beeTimer = 3.5f;
     public BeeHive beeHiveHome;
     public Flower[] flowerSearch;
     
@@ -20,52 +22,71 @@ public class Bee : MonoBehaviour
     // A simple timer to control the bee's movement
     private void BeeMovementCooldown()
     {
+        // Starting countdown
         beeTimer -= Time.deltaTime;
 
+        // Once timer reach 0
         if(beeTimer <= 0)
         {
+            // Pick a random flower and fly to it to check for nectar
             Flower randomFlower = PickFlower();
             CheckAnyFlower(randomFlower);
 
-            beeTimer = 2f;
+            // Reseting timer
+            beeTimer = 3.5f;
         }
     }
 
-
     private Flower PickFlower()
     {
-        // Picking a random flower that
+        // Using random class to pick a random flower from the array
         int randomNumber = Random.Range(0, flowerSearch.Length); 
-        Debug.Log($"This is flower number {randomNumber}");
+        //Debug.Log($"This is flower number {randomNumber}"); // FOR DEBUGGING
 
         return flowerSearch[randomNumber];
     }
 
+
+    // Method to let the bee fly to flower to check if it has nectar
     private void CheckAnyFlower(Flower element)
     {
-        // Code to make it so the bee check for any flower that may have any nectar (For Tutor)
+        // Target being the flower that the bee will fly to
         Flower target = element;
-        Vector3 originalPosition = transform.position;
 
-        transform.DOMove(target.transform.position, 0.25f).OnComplete( ()=> 
+        // Flying to the flower...
+        transform.DOMove(target.transform.position, 0.8f).OnComplete( ()=> 
         {
+            // If the bee find nectar inside the flower...
+            if(target.HasNectarCheck() == true)
+            {
             //Take nectar from flower
-            //If flower returned nectar then go back to the hive and give hive nectar
-            //If flower did not return nectar then go check another flower
+            target.hasNectar = false;
 
-        });
+            // Return back to the hive
+            transform.DOMove(beeHiveHome.transform.position, 1f);
+
+            // Giving one nectar to the beehive to be turn into honey
+            beeHiveHome.GiveNectar(1);
+            }
+            
+            // Otherwise...
+            else
+            {
+                // Repick another flower 
+                Flower randomFlower = PickFlower();
+
+                // Go to that flower and try again
+                CheckAnyFlower(randomFlower);
+            }
+
+        }).SetEase(Ease.Linear); // I love easing function
 
     }
 
+    // Initializing flower class array
     void Awake()
     {
         flowerSearch = GameObject.FindObjectsByType<Flower>(FindObjectsSortMode.None);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
     }
 
     // Update is called once per frame

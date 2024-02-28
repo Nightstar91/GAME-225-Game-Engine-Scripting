@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class Flower : MonoBehaviour
 {
     // Variable to hold the sprite render which change the color of the flower
@@ -13,23 +14,23 @@ public class Flower : MonoBehaviour
     
 
     // Attributes involving nectars
-    public float nectarAmount;
     public float nectarRate = 0.5f;
-    private float nectarTimer = 2f;
-
-    // Variable to store the initial timer set by the user to be reset the timer
+    private float nectarTimer = 5f;
     public bool hasNectar;
 
 
     // Once the timer hits 0, nectar is created and the timer is reset.
     private void NectarProduction()
     {
-        nectarTimer -= Time.deltaTime;
+        // Counting down the seconds
+        nectarTimer -= Time.deltaTime; 
 
+        // Once the timer reaches 0
         if(nectarTimer <= 0)
         {
-            nectarAmount += nectarRate;
-            nectarTimer = 2f;
+            // Set nectar to true and reset the timer
+            hasNectar = true;
+            nectarTimer = 5f;
         }
 
     }
@@ -37,7 +38,7 @@ public class Flower : MonoBehaviour
 
     public bool HasNectarCheck()
     {
-        if(nectarAmount >= 1)
+        if(hasNectar)
         {
             // Once the flower's nectar reaches at least 1 it will have nectar and its color is set to normal
             flowerSpriteRenderer.color = Color.white;
@@ -63,7 +64,6 @@ public class Flower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // The arithmetic for necter being produces after a certain amount of time
         NectarProduction();
 
         // Checking to see if the flower has nectar
